@@ -1,23 +1,39 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 // Components
 import Cart from "../cart/index";
 
 // Styles
 import * as Styles from "./styles";
+import { loginUser, logoutUser } from '../../redux/user/actions';
 
 function Header() {
   const [cartIsVisible, setCartIsVisible] = useState(false);
+  // para acessar o currentUser que esta no reducer usamos o useSelector
+  const { currentUser } = useSelector((rootReducer) => rootReducer.userReducer)
+  // o dispatch é utilizado para alterar a action. por exemplo, o estado inicial do currentUser é null e quero alterar o valor dele para 10, nesse caso precisamos usar o dispatch
+  const dispatch = useDispatch()
 
   const handleCartClick = () => {
     setCartIsVisible(true);
   };
 
+  const handleLoginClick = () => {
+    // o type é obrigatorio para dizer qual action estamos alterando
+    // o payload é opcional
+    dispatch(loginUser({ name: "Felipe", email: "felipe@rocha.com"}))
+  }
+
+  const handleLogoutClick = () => {
+    dispatch(logoutUser)
+  }
+
   return (
     <Styles.Container>
       <Styles.Logo>Redux Shopping</Styles.Logo>
       <Styles.Buttons>
-        <div>Login</div>
+        {currentUser ? <div onClick={handleLogoutClick}>Sair</div> : (<div onClick={handleLoginClick}>Login</div>)}
         <div onClick={handleCartClick}>Carrinho</div>
       </Styles.Buttons>
 
